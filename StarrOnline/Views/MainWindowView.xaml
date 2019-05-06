@@ -1,0 +1,178 @@
+﻿<Window x:Class="StarrOnline.Views.MainWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mCtrls="clr-namespace:StarrOnline.Controls"
+        xmlns:cal="http://www.caliburnproject.org"
+        WindowStartupLocation="CenterScreen" Background="#FF3E3E3E" Foreground="White"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StarrOnline"
+        xmlns:conv="clr-namespace:StarrOnline.Converters"
+        mc:Ignorable="d"
+        Title="STARR ONLINE ver 1.0" Height="650" Width="800" MinWidth="920" MinHeight="650" Icon="/StarrOnline;component/Images/StarrCircle.ico">
+
+    <Grid Background="#FFF7F3F3" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"  />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <mCtrls:Header Text="STARR ONLINE" TextBlock.FontSize="35" />
+        <!--Menu BUTTONS-->
+        <Border Grid.Row="1" Margin="10,10,10,0" CornerRadius="5">
+            <Border.Background>
+                <SolidColorBrush Color="#FF4CA3EC" Opacity="0.9"/>
+            </Border.Background>
+
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="mCtrls:MainButton">
+                        <Setter Property="Width" Value="110"/>
+                    </Style>
+                </Grid.Resources>
+
+                <StackPanel Orientation="Horizontal" Height="80" Margin="10,10,10,10" HorizontalAlignment="Left">
+                    <mCtrls:MainButton Text="Create"  ImageSource="../Images/add_user.ico" Margin="0,0,15,0"  cal:Message.Attach="[Event Click] = [Action BtnCreate]" Visibility="{Binding isVisible}"/>
+                    <mCtrls:MainButton Text="Open" cal:Message.Attach="[Event Click] = [Action EditClient]" ImageSource="../Images/edit_user.ico" Margin="0,0,15,0" />
+                    <!--<mCtrls:MainButton Text="{DynamicResource RemoveClient}" IsEnabled="{Binding SelectedClient, Converter={StaticResource NullToEnabledConverter}}" cal:Message.Attach="[Event Click] = [Action DeleteClient()]" ImageSource="Images/del_user.ico" Margin="0,0,15,0" />-->
+                </StackPanel>
+
+
+                <StackPanel Orientation="Horizontal" Height="80" HorizontalAlignment="Right" Margin="10,10,10,10">
+                    <mCtrls:MainButton Text="Settings" ImageSource="../Images/locker.ico" Margin="0,0,15,0" cal:Message.Attach="[Event Click] = [Action BtnSettings]" />
+                    <mCtrls:MainButton Text="Preview" cal:Message.Attach="[Event Click] = [Action BtnPreview]" ImageSource="../Images/print.ico" Margin="0,0,15,0"/>
+                    <mCtrls:MainButton Text="Export"  ImageSource="../Images/export.png" Margin="0,0,15,0" cal:Message.Attach="[Event Click] = [Action BtnExport]"/>
+                    <!--<mCtrls:MainButton Text="{DynamicResource EditLending}" cal:Message.Attach="[Event Click] = [Action EditLending]" IsEnabled="{Binding SelectedLending, Converter={StaticResource NullToEnabledConverter}}" ImageSource="Images/edit_wypoz.ico" Margin="0,0,15,0" />-->
+                    <mCtrls:MainButton Text="Exit" cal:Message.Attach="[Event Click] = [Action Cancel]" ImageSource="../Images/exit.png" Margin="0,0,15,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- BODY DATA-->
+        <Border Grid.Row="2" CornerRadius="5" Margin="10,10,10,0" Padding="14">
+            <Border.Background>
+                <SolidColorBrush Color="White" Opacity="0.9"/>
+            </Border.Background>
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DataGrid ItemsSource="{Binding Transactions}" Name="dgTransactions" SelectedItem="{Binding SelectedTransaction, Mode=TwoWay}" SelectionMode="Extended" ColumnWidth="*" HorizontalScrollBarVisibility="Auto" SelectionChanged="dgTransactions_SelectionChanged">
+                    <DataGrid.Resources>
+                        <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                            <Setter Property="cal:Message.Attach" Value="[Event MouseDoubleClick] = [Action EditClient]" />
+                        </Style>
+                        <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsExpanded, ElementName=exDetails}" Value="True">
+                                    <Setter Property="Grid.RowSpan" Value="2" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+
+                    <DataGrid.Columns>
+                        <!--<DataGridTextColumn Header="ITEM" Width="Auto" Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Converter={conv:RowToIndexConverter}}"/>-->
+                        <!--<DataGridTextColumn Binding="{Binding ITEMID}" Header="ID" SortMemberPath="ITEMID" Width="Auto"/>-->
+                        <DataGridTextColumn Binding="{Binding COCNO}" Header="COC NO" SortMemberPath="COCNO" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding ISSUEDATE, StringFormat=\{0:MMM\/dd\/yyyy\}}" Header="DATE ISSUED" SortMemberPath="ISSUEDATE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding MASTERPOLICY}" Header="MASTER POLICY" SortMemberPath="MASTERPOLICY" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding FULLNAME}"  Header="MAIN PAX" SortMemberPath="FULLNAME" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding BIRTHDATE, StringFormat=\{0:MMM\/dd\/yyyy\}}" Header="BIRTH DATE" SortMemberPath="BIRTHDATE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding PRODUCTTYPEDESCR}" Header="PRODUCT TYPE" SortMemberPath="PRODUCTTYPEDESCR" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding PLANOPTIONDESCR}" Header="PLAN OPTION" SortMemberPath="PLAN_OPTION" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding PLANTYPEDESCR}" Header="PLAN TYPE" SortMemberPath="PLAN_TYPE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding RELOC}" Header="RELOC" SortMemberPath="RELOC" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding COVERAGE}" Header="COVERAGE" SortMemberPath="COVERAGE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding TRAVELDATEFROM, StringFormat=\{0:MMM\/dd\/yyyy\}}" Header="START DATE" SortMemberPath="TRAVELDATEFROM" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding TRAVELDATETO, StringFormat=\{0:MMM\/dd\/yyyy\}}" Header="END DATE" SortMemberPath="TRAVELDATETO" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding NOOFDAYS}" Header="# OF DAYS" SortMemberPath="NOOFDAYS" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding GROSSAMOUNT, StringFormat=\{0:N\}}"  Header="GROSSAMOUNT" SortMemberPath="GROSSAMOUNT" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding NETTAMOUNT, StringFormat=\{0:N\}}"  Header="NETTAMOUNT" SortMemberPath="NETTAMOUNT" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding BASEPREMIUM, StringFormat=\{0:N\}}"  Header="BASEAMOUNT" SortMemberPath="BASEAMOUNT" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding DOCSTAMP, StringFormat=\{0:N\}}"  Header="DOCSTAMP" SortMemberPath="DOCSTAMP" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding SERVICEFEE, StringFormat=\{0:N\}}"  Header="SERVICEFEE" SortMemberPath="SERVICEFEE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding ADDFEE, StringFormat=\{0:N\}}"  Header="ADDLSERVFEE" SortMemberPath="ADDFEE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding VATONFEE, StringFormat=\{0:N\}}"  Header="VAT" SortMemberPath="VATONFEE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding WITHHOLDINGTAX, StringFormat=\{0:N\}}"  Header="WTAX" SortMemberPath="WITHHOLDINGTAX" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding ADDWITHHOLDINGTAX, StringFormat=\{0:N\}}"  Header="ADDLWTAX" SortMemberPath="ADDWITHHOLDINGTAX" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding NETSERVICEFEE, StringFormat=\{0:N\}}"  Header="NETSERVICEFEE" SortMemberPath="NETSERVICEFEE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding STARRPAYABLE, StringFormat=\{0:N\}}"  Header="STARRPAYABLE" SortMemberPath="STARRPAYABLE" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding COMPANY_NAME}" Header="COMPANY" SortMemberPath="issueDate" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding CREATED}" Header="CREATED BY" SortMemberPath="CREATED" Width="Auto"/>
+                        <DataGridTextColumn Binding="{Binding STATUS}" Header="Status" SortMemberPath="STATUS" Width="Auto"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+
+            </Grid>
+
+        </Border>
+
+        <!--FOOTER DATA-->
+        <Border Grid.Row="3" Margin="10" CornerRadius="5">
+            <Border.Background>
+                <SolidColorBrush Color="#FF4CA3EC" Opacity="0.9"/>
+            </Border.Background>
+
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="mCtrls:MainButton">
+                        <Setter Property="Width" Value="90" />
+                    </Style>
+                </Grid.Resources>
+                <Grid VerticalAlignment="Center" Margin="10,10,10,10" HorizontalAlignment="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="40" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Search Value: " HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,3" />
+                    <TextBox Grid.Column="1" Grid.Row="0" Width="200" Height="22"  VerticalContentAlignment="Center" Text="{Binding searchParameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Row="1" Text="Select Field: " VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,12"/>
+                    <ComboBox Grid.Row="1" Grid.Column="1" VerticalContentAlignment="Center" Height="22" Text="{Binding searchField, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,9">
+                        <ComboBoxItem>ISSUEDATE</ComboBoxItem>
+                        <ComboBoxItem>MASTERPOLICY</ComboBoxItem>
+                        <ComboBoxItem>COCNO</ComboBoxItem>
+                        <ComboBoxItem>FIRSTNAME</ComboBoxItem>
+                        <ComboBoxItem>LASTNAME</ComboBoxItem>
+                        <ComboBoxItem>PRODUCTTYPEDESCR</ComboBoxItem>
+                        <ComboBoxItem>PLANOPTIONDESCR</ComboBoxItem>
+                        <ComboBoxItem>PLANTYPEDESCR</ComboBoxItem>
+                        <ComboBoxItem>RELOC</ComboBoxItem>
+                        <ComboBoxItem>CREATEDBY</ComboBoxItem>
+                    </ComboBox>
+                    <CheckBox Grid.Column="2" Grid.Row="0" Margin="20,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding showCancelled}" cal:Message.Attach="[Event Click] = [Action showCancelAction]"/>
+                    <TextBlock Grid.Column="3" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Left" Text="Show Canceled Policy" Margin="5,0,0,0"/>
+                    <TextBlock Grid.Column="3" Grid.Row="1" Width="244" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding showTotalRow}"  Margin="0,6,0,0" Grid.ColumnSpan="2"/>
+                </Grid>
+
+
+                <StackPanel Orientation="Horizontal" Height="70" HorizontalAlignment="Right" Margin="10,10,10,10">
+                    <mCtrls:MainButton Text="Search" cal:Message.Attach="[Event Click] = [Action SeachTransactions]" ImageSource="../Images/search.png" Margin="0,0,15,0" />
+                    <!--<mCtrls:MainButton Text="Show ALL" cal:Message.Attach="[Event Click] = [Action RefreshTransactions]" ImageSource="../Images/selectall.ico" Margin="0,0,15,0" />-->
+                    <!--<mCtrls:MainButton Text="" Visibility="Collapsed" ImageSource="Images/time.png" Margin="0,0,15,0" />-->
+                    <mCtrls:MainButton Text="Refresh" cal:Message.Attach="[Event Click] = [Action RefreshTransactions]" ImageSource="../Images/refresh.ico" Margin="0,0,0,0" />
+                    <!--<mCtrls:MainButton Text="{DynamicResource Settings}" ImageSource="Images/settings.ico" Visibility="Collapsed" />-->
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
